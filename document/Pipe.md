@@ -52,8 +52,6 @@ example
 
 3. Global-level Pipes
 
-
-
 ## Handler-level Pipes
 
 핸들러 레벨에서 @UsePipes() 데코레이터를 이용하면 되빈다.
@@ -74,7 +72,6 @@ createBoard(
 
 핸들러레벨 파이프에 해당합니다.
 
-
 ## Parameter-level Pipes
 
 파라미터 레벨의 파이프는 특정 파라미터에만 적용되는 파이프입니다.
@@ -93,7 +90,6 @@ createBoard(
 
 위 예제에서 파이프는 title 인수에만 적용됩니다.
 
-
 ## Global Pipes
 
 글로벌 파이프는 애플리케이션 레벨의 파이프입니다.
@@ -104,16 +100,66 @@ createBoard(
 
 ```tsx
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule)
-    app.useGlobalPipes(GlobalPipes)
-    await app.listen(3000)
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(GlobalPipes);
+  await app.listen(3000);
 }
-bootstrap()
+bootstrap();
 ```
-
 
 # Built-in Pipes
 
 Nestjs에는 기본적으로 사용할 수 있게 만들어둔 6가지 파이프가 있습니다.
 
+1. Validation Pipe
+2. ParseIntPipe
+3. ParseBoolPipe
+4. ParseArrayPipe
+5. ParseUUIDPipe
+6. DefaultValuePipe
 
+이름만으로도 각 파이프가 어떤 일을 수행하는 지 어느정도 예상할 수 있습니다.
+
+```tsx
+@Get(':id')
+findOne(@Param('id', ParseIntPipe) id: number) {
+    return ;
+}
+```
+
+# 파이프를 이용한 유효성 검사
+
+파이프를 이용해서 유효성 검사를 수행할 수 있습니다.
+
+이를 위한 많은 라이브러리가 존재하는데요
+
+대표적으로는 class-validator, class-transformer 등이 있습니다.
+
+```
+npm i class-validator class-transformer --save
+```
+
+각자 사용하는 패키지매니저를 이용해 설치해주면 됩니다.
+
+```tsx
+import { IsNotEmpty } from 'class-validator';
+
+export class CreateBoardDto {
+  @IsNotEmpty()
+  title: string;
+  @IsNotEmpty()
+  description: string;
+}
+```
+
+```tsx
+  @Post()
+  @UsePipes(ValidationPipe)
+  createBoards(@Body() createBoardDto: CreateBoardDto) {
+    return this.boardsService.createBoard(createBoardDto);
+  }
+```
+
+중요한것은 usePipes와 같은 데코레이터를 이용하여
+
+Pipe를 사용한다는 것을 나타내는 것입니다.
