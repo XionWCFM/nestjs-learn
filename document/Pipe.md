@@ -109,7 +109,9 @@ bootstrap();
 
 # Built-in Pipes
 
-Nestjs에는 기본적으로 사용할 수 있게 만들어둔 6가지 파이프가 있습니다.
+Nestjs에는 기본적으로 사용할 수 있게 만들어둔 6가지 파이프가 있었습니다만
+
+이 마크다운을 작성하는 시점에서는 총 9 개가 제공되네요
 
 1. Validation Pipe
 2. ParseIntPipe
