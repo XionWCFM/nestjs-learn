@@ -21,8 +21,8 @@ export class BoardStatusValidationPipe implements PipeTransform {
   }
 }
 ```
-이런 형태로 타입스크립트의 implements 키워드를 이용합니다.
 
+이런 형태로 타입스크립트의 implements 키워드를 이용합니다.
 
 # transform 메서드
 
@@ -33,4 +33,40 @@ export class BoardStatusValidationPipe implements PipeTransform {
 두번째 파라미터는 인자에 대한 메타 데이터를 포함한 객체가 들어갑니다.
 
 transform() 메서드에서 리턴된 값은 Route 핸들러로 전해지게 됩니다.
+
+
+예제를 통해 이해를 해보도록 하겠습니다.
+
+src/boards/pipes/board-status-validation.pipe.ts
+```tsx
+import { BadRequestException, PipeTransform } from '@nestjs/common';
+import { BoardStatus } from '../boards.model';
+
+export class BoardStatusValidationPipe implements PipeTransform {
+  readonly StatusOptions = [BoardStatus.PRIVATE, BoardStatus.PUBLIC];
+  transform(value: any) {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    value = value.toUpperCase();
+    if (!this.isStatusValid(value)) {
+      throw new BadRequestException(`${value} isn't in the status options `);
+    }
+    return value;
+  }
+
+  private isStatusValid(status: any) {
+    const index = this.StatusOptions.indexOf(status);
+    return index !== -1;
+  }
+}
+```
+
+StatusOptions를 통해 ENUM인 값이 아니면 에러를 던지도록 만들었습니다.
+
+다만 Enum은 자바스크립트 오브젝트로 컴파일되기 때문에
+
+굳이 배열형태로 쓰지 않아도 object 순회 메서드를 통해 순회할 수 있습니다.
+
+이해를 쉽게 하기 위해 만들어진 예제라는 점 이해부탁드립니다.
 

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatus } from './boards.model';
+import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 
 @Controller('boards')
 export class BoardsController {
@@ -39,7 +40,10 @@ export class BoardsController {
   }
 
   @Patch('/:id/status')
-  updateBoardStatus(@Param('id') id, @Body('status') status: BoardStatus) {
+  updateBoardStatus(
+    @Param('id') id,
+    @Body('status', BoardStatusValidationPipe) status: BoardStatus,
+  ) {
     return this.boardsService.updateBoardStatus(id, status);
   }
 }
